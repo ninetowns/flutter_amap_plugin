@@ -37,7 +37,7 @@ class AMapMapOptions extends AMapBaseModel {
   final double zoomLevel;
 
   /// 当前地图的中心点坐标
-  final Coordinate centerCoordinate;
+  Coordinate? centerCoordinate;
 
   ///最小缩放级别
   final double minZoomLevel;
@@ -124,7 +124,7 @@ class AMapMapOptions extends AMapBaseModel {
       'userTrackingMode': userTrackingMode,
     };
     if (centerCoordinate != null) {
-      map['centerCoordinate'] = centerCoordinate.toJson();
+      map['centerCoordinate'] = centerCoordinate?.toJson();
     }
 
     return map;

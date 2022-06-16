@@ -15,9 +15,9 @@ class AMapRouteController {
   AMapRouteController() : _routeChannel = MethodChannel(_routeChannelPrefix);
 
   void initRouteChannel({
-    @required RoutePlanningCallHandler onRoutePlanningCallHandler,
+    required RoutePlanningCallHandler onRoutePlanningCallHandler,
   }) {
-    _routeChannel.setMethodCallHandler((handler) {
+    _routeChannel.setMethodCallHandler((handler)async {
       switch (handler.method) {
         case 'onRouteSearchDone':
           RouteSearchDoneModel model = RouteSearchDoneModel();
@@ -26,19 +26,19 @@ class AMapRouteController {
           model.strategy = handler.arguments['strategy'];
           model.totalTrafficLights = handler.arguments['totalTrafficLights'];
           if (onRoutePlanningCallHandler != null) {
-            onRoutePlanningCallHandler(model, null, null);
+            onRoutePlanningCallHandler(model, '', Error());
           }
           break;
         case 'onShareSearchDone':
           if (onRoutePlanningCallHandler != null) {
             onRoutePlanningCallHandler(
-                null, handler.arguments['shareURL'], null);
+                RouteSearchDoneModel(), handler.arguments['shareURL'], Error());
           }
           break;
         case 'routePlanningError':
           if (onRoutePlanningCallHandler != null) {
             onRoutePlanningCallHandler(
-                null, null, FlutterError(handler.arguments.toString()));
+                RouteSearchDoneModel(), '', FlutterError(handler.arguments.toString()));
           }
           break;
         default:

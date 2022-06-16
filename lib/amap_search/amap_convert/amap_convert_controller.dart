@@ -9,21 +9,37 @@ const _convertChannelPrefix = 'plugin/amap/search/convert';
 typedef void ConvertCallHandler(
     Coordinate coordinate, String address, Error error);
 
+typedef void SearchCallHandler(
+    List items);
+
 class AMapConvertController {
   final MethodChannel _convertChannel;
 
   AMapConvertController()
       : _convertChannel = MethodChannel(_convertChannelPrefix);
 
-  void initConvertChannel({
-    @required ConvertCallHandler onConvertCallHandler,
+  void initSearchChannel({
+    required SearchCallHandler onSearchCallHandler,
   }) {
-    _convertChannel.setMethodCallHandler((handler) {
+    _convertChannel.setMethodCallHandler((handler) async {
+      switch (handler.method) {
+        case 'onSearchKeyword':
+          onSearchCallHandler(handler.arguments);
+          break;
+      }
+    });
+  }
+
+
+  void initConvertChannel({
+    required ConvertCallHandler onConvertCallHandler,
+  }) {
+    _convertChannel.setMethodCallHandler((handler) async{
       switch (handler.method) {
         case 'onCoordinateToGeo':
           if (onConvertCallHandler != null) {
             String address = handler.arguments['address'].toString();
-            onConvertCallHandler(null, address, null);
+            onConvertCallHandler(Coordinate(0,0), address, Error());
           }
           break;
         case 'onGeoToCoordinate':
@@ -31,17 +47,27 @@ class AMapConvertController {
             Coordinate coordinate = Coordinate(
                 double.parse(handler.arguments['lat'].toString()),
                 double.parse(handler.arguments['lon'].toString()));
-            onConvertCallHandler(coordinate, null, null);
+            onConvertCallHandler(coordinate, '', Error());
           }
           break;
         case 'onConvertError':
           if (onConvertCallHandler != null) {
             onConvertCallHandler(
-                null, null, FlutterError(handler.arguments.toString()));
+                Coordinate(0,0), '', FlutterError(handler.arguments.toString()));
           }
           break;
       }
     });
+  }
+
+  Future distance(Map params) async {
+    var result = await _convertChannel.invokeMethod('distance', params);
+    return result;
+  }
+
+  Future searchKeyword(String keyword,String city) async {
+    var result = await _convertChannel.invokeMethod('searchKeyword', {'keyword':keyword,'city':city});
+    return result;
   }
 
   Future geoConvertToCoordinate(String geo) async {

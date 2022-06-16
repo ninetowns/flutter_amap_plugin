@@ -11,12 +11,12 @@ typedef void MapAnnotationTap(int index);
 
 class AMapMapController {
   final MethodChannel _mapChannel;
-  final MapViewWillStartLoadingMap onMapStartLodingMap;
-  final MapViewDidFinishLoadingMap onMapFinishLodingMap;
-  final MapAnnotationTap onMapAnnotationTap;
+  MapViewWillStartLoadingMap? onMapStartLodingMap;
+  MapViewDidFinishLoadingMap? onMapFinishLodingMap;
+  MapAnnotationTap? onMapAnnotationTap;
 
   AMapMapController.viewId({
-    @required int viewId,
+    required int viewId,
     this.onMapStartLodingMap,
     this.onMapFinishLodingMap,
     this.onMapAnnotationTap,
@@ -25,21 +25,21 @@ class AMapMapController {
   void dispose() {}
 
   void initMapChannel() {
-    _mapChannel.setMethodCallHandler((handler) {
+    _mapChannel.setMethodCallHandler((handler) async{
       switch (handler.method) {
         case 'mapViewWillStartLoadingMap':
           if (onMapStartLodingMap != null) {
-            onMapStartLodingMap();
+            onMapStartLodingMap!();
           }
           break;
         case 'mapViewDidFinishLoadingMap':
           if (onMapFinishLodingMap != null) {
-            onMapFinishLodingMap();
+            onMapFinishLodingMap!();
           }
           break;
         case 'annotation_tap':
           if (onMapAnnotationTap != null) {
-            onMapAnnotationTap(handler.arguments['tapIndex']);
+            onMapAnnotationTap!(handler.arguments['tapIndex']);
           }
           break;
         default:
@@ -48,7 +48,7 @@ class AMapMapController {
   }
 
   Future addAnnotation({
-    @required AMapAnnotationOptions options,
+    required AMapAnnotationOptions options,
   }) async {
     return _mapChannel.invokeMethod(
         'annotation_add', options.toJsonString());

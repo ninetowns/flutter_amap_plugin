@@ -11,19 +11,19 @@ typedef void NavMoreHandler();
 
 class AMapNavController {
   final MethodChannel _navChannel;
-  final NavCloseHandler onCloseHandler;
-  final NavMoreHandler onMoreHandler;
+  final NavCloseHandler? onCloseHandler;
+  final NavMoreHandler? onMoreHandler;
   final MethodChannel _componentChannel;
 
   AMapNavController({
-    int viewId,
+    required int viewId,
     this.onCloseHandler,
     this.onMoreHandler,
   })  : _navChannel = MethodChannel('$_navChannelPrefix/$viewId'),
         _componentChannel = MethodChannel('$_navChannelPrefix');
 
   Future startAMapNav({
-    @required Coordinate coordinate,
+    required Coordinate coordinate,
   }) {
     return _navChannel
         .invokeMethod('startNav', coordinate.toJsonString())
@@ -33,7 +33,7 @@ class AMapNavController {
   }
 
   Future startComponent({
-    @required Coordinate coordinate,
+    required Coordinate coordinate,
   }) {
     return _componentChannel
         .invokeMethod('startComponentNav', coordinate.toJsonString())
@@ -43,18 +43,18 @@ class AMapNavController {
   }
 
   void initNavChannel(BuildContext context) {
-    _navChannel.setMethodCallHandler((handler) {
+    _navChannel.setMethodCallHandler((handler) async{
       switch (handler.method) {
         case 'close_nav':
           if (onCloseHandler != null) {
-            onCloseHandler();
+            onCloseHandler!();
           } else {
             Navigator.pop(context);
           }
           break;
         case 'more_nav':
           if (onMoreHandler != null) {
-            onMoreHandler();
+            onMoreHandler!();
           }
           break;
         default:

@@ -26,8 +26,11 @@
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    ACCESS_LOCATION_EXTRA_COMMANDS
+    
     <application>
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
         <service android:name="com.amap.api.location.APSService"></service>
 
         <activity android:name="com.amap.api.navi.AmapRouteActivity"

@@ -46,6 +46,7 @@ public class FlutterAMapStartLocation implements MethodChannel.MethodCallHandler
                 map.put("address", aMapLocation.getAddress());
                 map.put("lat", aMapLocation.getLatitude());
                 map.put("lon", aMapLocation.getLongitude());
+                System.out.println(aMapLocation.getAddress());
                 FlutterAmapPlugin.locChannel.invokeMethod("reGeocodeSuccess", map);
             } else {
                 Map<String, Object> map = new HashMap<>();

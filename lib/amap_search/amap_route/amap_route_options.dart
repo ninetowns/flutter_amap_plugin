@@ -34,8 +34,8 @@ class AMapRouteOptions extends AMapBaseModel {
   final int strategy;
 
   AMapRouteOptions({
-    @required this.origin,
-    @required this.destination,
+    required this.origin,
+    required this.destination,
     this.strategy = 0,
   });
 

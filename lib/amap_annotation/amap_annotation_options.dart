@@ -26,8 +26,8 @@ class AMapAnnotationOptions extends AMapBaseModel {
     this.highlighted = false,
     this.canShowCallout = true,
     this.draggable = true,
-    this.annotationIcon,
-    @required this.annotationCoordinates,
+    this.annotationIcon='',
+    required this.annotationCoordinates,
   });
 
   @override
@@ -61,10 +61,10 @@ class AMapAnnotationModel extends AMapBaseModel {
   final String annotationIcon;
 
   AMapAnnotationModel({
-    @required this.coordinate,
-    this.title,
-    this.subTitle,
-    this.annotationIcon,
+    required this.coordinate,
+    this.title='',
+    this.subTitle='',
+    this.annotationIcon='',
   });
 
   @override

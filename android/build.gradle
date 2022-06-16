@@ -25,7 +25,7 @@ android {
     compileSdkVersion 30
 
     defaultConfig {
-        minSdkVersion 30
+        minSdkVersion 21
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     lintOptions {
@@ -35,8 +35,9 @@ android {
 
 dependencies {
     implementation 'com.amap.api:navi-3dmap:latest.integration'
-    implementation 'com.amap.api:search:latest.integration'
-    implementation 'com.amap.api:location:latest.integration'
+//    implementation 'com.amap.api:search:latest.integration'
+//    implementation 'com.amap.api:location:latest.integration'
+//    implementation 'com.amap.api:3dmap:latest.integration'
     implementation 'com.google.code.gson:gson:2.2.4'
     implementation 'com.mylhyl:acp:1.2.0'
 }

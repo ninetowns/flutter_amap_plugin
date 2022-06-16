@@ -3,14 +3,9 @@ package amap.com.example.flutter_amap_plugin;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 import android.os.Bundle;
 
-import com.amap.api.maps.model.LatLng;
-import com.amap.api.maps.model.Poi;
-import com.amap.api.navi.AmapNaviPage;
-import com.amap.api.navi.AmapNaviParams;
-import com.amap.api.navi.AmapNaviType;
-import com.amap.api.navi.AmapPageType;
 import com.mylhyl.acp.Acp;
 import com.mylhyl.acp.AcpListener;
 import com.mylhyl.acp.AcpOptions;
@@ -29,20 +24,28 @@ import amap.com.example.flutter_amap_plugin.Nav.FlutterAMapNavView;
 import amap.com.example.flutter_amap_plugin.Search.FlutterAMapConvertRegister;
 import amap.com.example.flutter_amap_plugin.Search.FlutterAMapSearchRegister;
 import io.flutter.embedding.android.FlutterActivity;
+import io.flutter.embedding.engine.plugins.activity.ActivityAware;
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
+import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
+import io.flutter.embedding.engine.plugins.FlutterPlugin;
+import io.flutter.plugin.common.StandardMethodCodec;
+import io.flutter.plugin.platform.PlatformViewRegistry;
 
 import static amap.com.example.flutter_amap_plugin.Location.FlutterAMapLocationRegister.LOCATION_CHANNEL_NAME;
 import static amap.com.example.flutter_amap_plugin.Search.FlutterAMapConvertRegister.SEARCH_CONVERT_CHANNEL_NAME;
 import static amap.com.example.flutter_amap_plugin.Search.FlutterAMapSearchRegister.SEARCH_ROUTE_CHANNEL_NAME;
 
+import androidx.annotation.NonNull;
+
 /**
  * FlutterAmapPlugin
  */
-public class FlutterAmapPlugin implements MethodCallHandler {
+public class FlutterAmapPlugin implements FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware {
     /**
      * Plugin registration.
      */
@@ -53,6 +56,11 @@ public class FlutterAmapPlugin implements MethodCallHandler {
     public static MethodChannel locChannel;
     public static MethodChannel routeChannel;
     public static MethodChannel convertChannel;
+    private BinaryMessenger messenger;
+    private PlatformViewRegistry platformViewRegistry;
+    private FlutterPluginBinding pluginBinding;
+    private Activity activity;
+    private Context context;
 
     // 当前Activity环境
     private static FlutterActivity root;
@@ -71,7 +79,11 @@ public class FlutterAmapPlugin implements MethodCallHandler {
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.READ_PHONE_STATE};
+            Manifest.permission.READ_PHONE_STATE
+    };
+
+    public FlutterAmapPlugin() {
+    }
 
     public FlutterAmapPlugin(FlutterActivity activity) {
         FlutterAmapPlugin.root = activity;
@@ -160,10 +172,10 @@ public class FlutterAmapPlugin implements MethodCallHandler {
 
         final FlutterAmapPlugin plugin = new FlutterAmapPlugin(root);
 
-        registrar.platformViewRegistry().registerViewFactory(FlutterAMapView.MAP_CHANNEL_NAME,
-                new FlutterAMapViewFactory(plugin.state, registrar));
-        registrar.platformViewRegistry().registerViewFactory(FlutterAMapNavView.NAV_CHANNEL_NAME,
-                new FlutterAMapNavFactory(plugin.state, registrar));
+//        registrar.platformViewRegistry().registerViewFactory(FlutterAMapView.MAP_CHANNEL_NAME,
+//                new FlutterAMapViewFactory(plugin.state, registrar));
+//        registrar.platformViewRegistry().registerViewFactory(FlutterAMapNavView.NAV_CHANNEL_NAME,
+//                new FlutterAMapNavFactory(plugin.state, registrar));
     }
 
     @Override
@@ -176,7 +188,7 @@ public class FlutterAmapPlugin implements MethodCallHandler {
                 result.success("init");
                 break;
             case "initLocation":
-                new FlutterAMapLocationRegister().onMethodCall(call, result);
+                new FlutterAMapLocationRegister(activity,context).onMethodCall(call, result);
                 break;
             case "startSingleLocation":
                 new FlutterAMapStartLocation().onMethodCall(call, result);
@@ -188,14 +200,14 @@ public class FlutterAmapPlugin implements MethodCallHandler {
                 new FlutterAMapSearchRegister().onMethodCall(call, result);
                 break;
             case "geoToCoordinate":
-                new FlutterAMapConvertRegister().onMethodCall(call, result);
-                break;
             case "coordinateToGeo":
-                new FlutterAMapConvertRegister().onMethodCall(call, result);
+            case "searchKeyword":
+            case "distance":
+                new FlutterAMapConvertRegister(activity,context).onMethodCall(call, result);
                 break;
             case "startComponentNav":
 //                initNav();
-                new FlutterAMapComponentNavView(registrar).onMethodCall(call,result);
+                new FlutterAMapComponentNavView(context).onMethodCall(call,result);
                 break;
             default:
                 result.notImplemented();
@@ -203,14 +215,13 @@ public class FlutterAmapPlugin implements MethodCallHandler {
         }
     }
 
-    void initNav() {
-        LatLng p4 = new LatLng(39.773801, 116.368984);//新三余公园(南5环)
-        Poi end = new Poi("新三余公园(南5环)", p4, "");
-//        Poi end = new Poi(null, new LatLng(latlon.latitude, latlon.longitude), "");
-        AmapNaviParams amapNaviParams = new AmapNaviParams(null, null, end, AmapNaviType.DRIVER, AmapPageType.NAVI);
-        amapNaviParams.setUseInnerVoice(true);
-        AmapNaviPage.getInstance().showRouteActivity(FlutterAmapPlugin.root.getApplicationContext(), amapNaviParams, null);
-    }
+//    void initNav() {
+//        LatLng p4 = new LatLng(39.773801, 116.368984);//新三余公园(南5环)
+//        Poi end = new Poi("新三余公园(南5环)", p4, "");
+//        AmapNaviParams amapNaviParams = new AmapNaviParams(null, null, end, AmapNaviType.DRIVER, AmapPageType.NAVI);
+//        amapNaviParams.setUseInnerVoice(true);
+//        AmapNaviPage.getInstance().showRouteActivity(FlutterAmapPlugin.root.getApplicationContext(), amapNaviParams, null);
+//    }
 
     /**
      * 获取权限
@@ -227,4 +238,52 @@ public class FlutterAmapPlugin implements MethodCallHandler {
         });
     }
 
+    @Override
+    public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
+        messenger = binding.getBinaryMessenger();
+        platformViewRegistry = binding.getPlatformViewRegistry();
+        pluginBinding = binding;
+        context = binding.getApplicationContext();
+
+        final MethodChannel channel = new MethodChannel(binding.getBinaryMessenger(), MAP_BASE_CHANNEL);
+        channel.setMethodCallHandler(this);
+
+        final MethodChannel locChannel = new MethodChannel(binding.getBinaryMessenger(), LOCATION_CHANNEL_NAME);
+        locChannel.setMethodCallHandler(this);
+        FlutterAmapPlugin.locChannel = locChannel;
+
+        final MethodChannel convertChannel = new MethodChannel(binding.getBinaryMessenger(), SEARCH_CONVERT_CHANNEL_NAME);
+        convertChannel.setMethodCallHandler(this);
+        FlutterAmapPlugin.convertChannel = convertChannel;
+
+        final MethodChannel navChannel = new MethodChannel(binding.getBinaryMessenger(), FlutterAMapNavView.NAV_CHANNEL_NAME);
+        navChannel.setMethodCallHandler(this);
+    }
+
+    @Override
+    public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
+
+    }
+
+    @Override
+    public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
+       activity= binding.getActivity();
+       pluginBinding.getPlatformViewRegistry().registerViewFactory(FlutterAMapNavView.NAV_CHANNEL_NAME,  new FlutterAMapNavFactory(messenger, activity));
+
+    }
+
+    @Override
+    public void onDetachedFromActivityForConfigChanges() {
+
+    }
+
+    @Override
+    public void onReattachedToActivityForConfigChanges(@NonNull ActivityPluginBinding binding) {
+
+    }
+
+    @Override
+    public void onDetachedFromActivity() {
+
+    }
 }

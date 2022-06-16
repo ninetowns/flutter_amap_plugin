@@ -10,26 +10,25 @@ const _viewType = 'plugin/amap/map';
 typedef void MapViewCreateCallHandler(AMapMapController controller);
 
 class AMapMapView extends StatelessWidget {
-  final MapViewCreateCallHandler onMapViewCreate;
+  final MapViewCreateCallHandler? onMapViewCreate;
 
   /// 地图开始加载回调
-  final MapViewWillStartLoadingMap onMapStartLodingMap;
+  final MapViewWillStartLoadingMap? onMapStartLodingMap;
 
   /// 地图加载成功回调
-  final MapViewDidFinishLoadingMap onMapFinishLodingMap;
+  final MapViewDidFinishLoadingMap? onMapFinishLodingMap;
 
   /// 标记视图点击回调
-  final MapAnnotationTap onMapAnnotationTap;
-  final AMapMapOptions options;
+  final MapAnnotationTap? onMapAnnotationTap;
+  final AMapMapOptions? options;
 
   const AMapMapView({
-    Key key,
     this.onMapViewCreate,
     this.options,
     this.onMapStartLodingMap,
     this.onMapFinishLodingMap,
     this.onMapAnnotationTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +43,7 @@ class AMapMapView extends StatelessWidget {
         viewType: _viewType,
         gestureRecognizers: gestureRecognizers,
         creationParamsCodec: StandardMessageCodec(),
-        creationParams: options == null ? options : options.toJsonString(),
+        creationParams: options == null ? options : options?.toJsonString(),
         onPlatformViewCreated: _onPlatformViewCreated,
       );
     } else if (Platform.isAndroid) {
@@ -52,7 +51,7 @@ class AMapMapView extends StatelessWidget {
         viewType: _viewType,
         gestureRecognizers: gestureRecognizers,
         creationParamsCodec: StandardMessageCodec(),
-        creationParams: options == null ? options : options.toJsonString(),
+        creationParams: options == null ? options : options?.toJsonString(),
         onPlatformViewCreated: _onPlatformViewCreated,
       );
     } else {
@@ -64,7 +63,7 @@ class AMapMapView extends StatelessWidget {
 
   void _onPlatformViewCreated(int viewId) {
     if (onMapViewCreate != null) {
-      onMapViewCreate(AMapMapController.viewId(
+      onMapViewCreate!(AMapMapController.viewId(
         viewId: viewId,
         onMapStartLodingMap: onMapStartLodingMap,
         onMapFinishLodingMap: onMapFinishLodingMap,

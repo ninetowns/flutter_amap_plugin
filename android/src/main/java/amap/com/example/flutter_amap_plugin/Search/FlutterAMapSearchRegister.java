@@ -1,6 +1,7 @@
 package amap.com.example.flutter_amap_plugin.Search;
 
 
+import com.amap.api.services.core.AMapException;
 import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.route.BusRouteResult;
 import com.amap.api.services.route.DrivePath;
@@ -30,17 +31,20 @@ public class FlutterAMapSearchRegister implements MethodChannel.MethodCallHandle
 
     @Override
     public void onMethodCall(MethodCall methodCall, MethodChannel.Result result) {
-        if (methodCall.arguments instanceof String) {
-            AMapRoutePlanningModel model = new Gson().fromJson(methodCall.arguments.toString(), AMapRoutePlanningModel.class);
-            mRouteSearch = new RouteSearch(FlutterAmapPlugin.registrar.activity().getApplicationContext());
-            mRouteSearch.setRouteSearchListener(this);
-            routePlanning(model);
+        try {
+            if (methodCall.arguments instanceof String) {
+                AMapRoutePlanningModel model = new Gson().fromJson(methodCall.arguments.toString(), AMapRoutePlanningModel.class);
+                mRouteSearch = new RouteSearch(FlutterAmapPlugin.registrar.activity().getApplicationContext());
+                mRouteSearch.setRouteSearchListener(this);
+                routePlanning(model);
 
-            mShareSearch = new ShareSearch(FlutterAmapPlugin.registrar.activity().getApplicationContext());
-            mShareSearch.setOnShareSearchListener(this);
-            routeShareUrl(model);
+                mShareSearch = new ShareSearch(FlutterAmapPlugin.registrar.activity().getApplicationContext());
+                mShareSearch.setOnShareSearchListener(this);
+                routeShareUrl(model);
+            }
+        } catch (AMapException e) {
+            e.printStackTrace();
         }
-
 
     }
 

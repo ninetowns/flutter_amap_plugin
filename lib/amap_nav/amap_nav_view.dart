@@ -12,20 +12,19 @@ const _viewType = 'plugin/amap/nav';
 typedef void NavViewCreateCallHandler(AMapNavController controller);
 
 class AMapNavView extends StatelessWidget {
-  final NavViewCreateCallHandler onNavViewCreate;
-  final AMapNavOptions options;
+  final NavViewCreateCallHandler? onNavViewCreate;
+  final AMapNavOptions? options;
 
   /// 使用此回调会拦截返回事件，需要自己实现pop
-  final NavCloseHandler onCloseHandler;
-  final NavMoreHandler onMoreHandler;
+  final NavCloseHandler? onCloseHandler;
+  final NavMoreHandler? onMoreHandler;
 
   const AMapNavView({
-    Key key,
     this.onNavViewCreate,
     this.options,
     this.onCloseHandler,
     this.onMoreHandler,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +39,7 @@ class AMapNavView extends StatelessWidget {
         viewType: _viewType,
         gestureRecognizers: gestureRecognizers,
         creationParamsCodec: StandardMessageCodec(),
-        creationParams: options == null ? AMapNavOptions().toJsonString() : options.toJsonString(),
+        creationParams: options == null ? AMapNavOptions().toJsonString() : options?.toJsonString(),
         onPlatformViewCreated: _onPlatformViewCreated,
         hitTestBehavior: PlatformViewHitTestBehavior.translucent,
       );
@@ -49,7 +48,7 @@ class AMapNavView extends StatelessWidget {
         viewType: _viewType,
         gestureRecognizers: gestureRecognizers,
         creationParamsCodec: StandardMessageCodec(),
-        creationParams: options == null ? AMapNavOptions().toJsonString() : options.toJsonString(),
+        creationParams: options == null ? AMapNavOptions().toJsonString() : options?.toJsonString(),
         onPlatformViewCreated: _onPlatformViewCreated,
       );
     } else {
@@ -66,7 +65,7 @@ class AMapNavView extends StatelessWidget {
       onMoreHandler: onMoreHandler,
     );
     if (onNavViewCreate != null) {
-      onNavViewCreate(_controller);
+      onNavViewCreate!(_controller);
     }
   }
 }

@@ -31,8 +31,8 @@ public class FlutterAMapComponentNavView implements INaviInfoCallback, MethodCha
     private final Context context;
     private Coordinate latlon;
 
-    public FlutterAMapComponentNavView(PluginRegistry.Registrar registrar) {
-        this.context = registrar.context();
+    public FlutterAMapComponentNavView(Context context) {
+        this.context = context;
     }
 
     void initNav() {
@@ -104,6 +104,36 @@ public class FlutterAMapComponentNavView implements INaviInfoCallback, MethodCha
     @Override
     public void onArrivedWayPoint(int i) {
 
+    }
+
+    @Override
+    public void onMapTypeChanged(int i) {
+
+    }
+
+    @Override
+    public void onNaviDirectionChanged(int i) {
+
+    }
+
+    @Override
+    public void onDayAndNightModeChanged(int i) {
+
+    }
+
+    @Override
+    public void onBroadcastModeChanged(int i) {
+
+    }
+
+    @Override
+    public void onScaleAutoChanged(boolean b) {
+
+    }
+
+    @Override
+    public View getCustomMiddleView() {
+        return null;
     }
 
     @Override

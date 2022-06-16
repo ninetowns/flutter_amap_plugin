@@ -16,15 +16,14 @@ class AMapLocationController {
   AMapLocationController() : _locChannel = MethodChannel(_locChannelPrefix);
 
   void initLocationChannel({
-    @required LocationCallHandler onLocationCallHandler,
+    required LocationCallHandler onLocationCallHandler,
   }) {
-    _locChannel.setMethodCallHandler((handler) {
+    _locChannel.setMethodCallHandler((handler) async{
       switch (handler.method) {
         case 'locationError':
-          print(handler.arguments);
           if (onLocationCallHandler != null) {
             onLocationCallHandler(
-                null, null, null, FlutterError(handler.arguments));
+                '', 0, 0, FlutterError(handler.arguments));
           }
           break;
         case 'locationSuccess':
@@ -32,7 +31,7 @@ class AMapLocationController {
           stopLocation();
           if (onLocationCallHandler != null) {
             onLocationCallHandler(
-                null, handler.arguments['lon'], handler.arguments['lat'], null);
+                '', handler.arguments['lon'], handler.arguments['lat'], FlutterError(''));
           }
           break;
         case 'reGeocodeSuccess':
@@ -40,7 +39,7 @@ class AMapLocationController {
           stopLocation();
           if (onLocationCallHandler != null) {
             onLocationCallHandler(handler.arguments['address'],
-                handler.arguments['lon'], handler.arguments['lat'], null);
+                handler.arguments['lon'], handler.arguments['lat'], FlutterError(''));
           }
           break;
         default:
@@ -49,7 +48,7 @@ class AMapLocationController {
   }
 
   Future initLocation({
-    @required LocationCallHandler onLocationCallHandler,
+    required LocationCallHandler onLocationCallHandler,
   }) async {
     initLocationChannel(onLocationCallHandler: onLocationCallHandler);
     var result = await _locChannel.invokeMethod('initLocation');
@@ -57,7 +56,7 @@ class AMapLocationController {
   }
 
   Future startSingleLocation({
-    @required AMapLocationOptions options,
+    required AMapLocationOptions options,
   }) async {
     var result = await _locChannel.invokeMethod(
         'startSingleLocation', options.toJsonString());
