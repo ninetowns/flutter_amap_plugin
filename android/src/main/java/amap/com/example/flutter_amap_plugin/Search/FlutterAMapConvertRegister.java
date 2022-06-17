@@ -146,8 +146,8 @@ public class FlutterAMapConvertRegister implements MethodChannel.MethodCallHandl
             poiMap.put("parkingType",item.getParkingType());
             poiMap.put("pcode",item.getProvinceCode());
             pois.add(poiMap);
-            resultCallback.success(pois);
         }
+        resultCallback.success(pois);
     }
 
     @Override

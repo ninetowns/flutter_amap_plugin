@@ -18,12 +18,21 @@ class AMapNavView extends StatelessWidget {
   /// 使用此回调会拦截返回事件，需要自己实现pop
   final NavCloseHandler? onCloseHandler;
   final NavMoreHandler? onMoreHandler;
+  final NavCallbackHandler? onInitNaviSuccess;
+  final NavCallbackHandler? onReCalculateRoute;
+  final NavCallbackHandler? onNaviCancel;
+  final NavEndHandler? onEndNavi;
+
 
   const AMapNavView({
     this.onNavViewCreate,
     this.options,
     this.onCloseHandler,
     this.onMoreHandler,
+    this.onInitNaviSuccess,
+    this.onEndNavi,
+    this.onNaviCancel,
+    this.onReCalculateRoute
   });
 
   @override
@@ -63,6 +72,10 @@ class AMapNavView extends StatelessWidget {
       viewId: viewId,
       onCloseHandler: onCloseHandler,
       onMoreHandler: onMoreHandler,
+      onInitNaviSuccess: onInitNaviSuccess,
+      onReCalculateRoute:onReCalculateRoute,
+      onNaviCancel:onNaviCancel,
+      onEndNavi:onEndNavi
     );
     if (onNavViewCreate != null) {
       onNavViewCreate!(_controller);
