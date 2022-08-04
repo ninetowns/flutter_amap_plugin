@@ -19,6 +19,7 @@ class AMapNavView extends StatelessWidget {
   final NavCloseHandler? onCloseHandler;
   final NavMoreHandler? onMoreHandler;
   final NavCallbackHandler? onInitNaviSuccess;
+  final NavCallbackHandler? onInitNaviFailure;
   final NavCallbackHandler? onReCalculateRoute;
   final NavCallbackHandler? onNaviCancel;
   final NavEndHandler? onEndNavi;
@@ -30,6 +31,7 @@ class AMapNavView extends StatelessWidget {
     this.onCloseHandler,
     this.onMoreHandler,
     this.onInitNaviSuccess,
+    this.onInitNaviFailure,
     this.onEndNavi,
     this.onNaviCancel,
     this.onReCalculateRoute
@@ -73,6 +75,7 @@ class AMapNavView extends StatelessWidget {
       onCloseHandler: onCloseHandler,
       onMoreHandler: onMoreHandler,
       onInitNaviSuccess: onInitNaviSuccess,
+      onInitNaviFailure: onInitNaviFailure,
       onReCalculateRoute:onReCalculateRoute,
       onNaviCancel:onNaviCancel,
       onEndNavi:onEndNavi

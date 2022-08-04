@@ -18,6 +18,7 @@ class AMapNavController {
   final MethodChannel _componentChannel;
   final NavCallbackHandler? onInitNaviSuccess;
   final NavCallbackHandler? onReCalculateRoute;
+  final NavCallbackHandler? onInitNaviFailure;
   final NavCallbackHandler? onNaviCancel;
   final NavEndHandler? onEndNavi;
 
@@ -29,6 +30,7 @@ class AMapNavController {
     this.onInitNaviSuccess,
     this.onEndNavi,
     this.onReCalculateRoute,
+    this.onInitNaviFailure,
     this.onNaviCancel
   })  : _navChannel = MethodChannel('$_navChannelPrefix/$viewId'),
         _componentChannel = MethodChannel('$_navChannelPrefix');
@@ -91,10 +93,18 @@ class AMapNavController {
             onInitNaviSuccess!();
           }
           break;
+        case 'onInitNaviFailure':
+          if (onInitNaviSuccess != null) {
+            onInitNaviFailure!();
+          }
+          break;
         case 'onReCalculateRoute':
           if (onReCalculateRoute != null) {
             onReCalculateRoute!();
           }
+          break;
+        case 'onCalculateRouteFailure':
+            print('ssssss');
           break;
         case 'onEndNavi':
           if (onEndNavi != null) {
